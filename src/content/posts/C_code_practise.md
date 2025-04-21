@@ -93,58 +93,10 @@ public:
 
 ```
 
-效率非常低，看一下，应该用可以在DFS中进行标记,而不是两次遍历。
 
-```c++
+这样的题目，特点是包含方法调用关系或者依赖关系，就应该想到图论。
+效率相当低，看了别人的解题思路是使用DFS进行标记，而不是两次遍历。
 
-class Solution {
-public:
-    vector<int> remainingMethods(int n, int k, vector<vector<int>>& invocations) {
-        // 构建正向和反向邻接表
-        vector<vector<int>> graph(n);        // 方法调用了哪些其他方法
-        vector<vector<int>> reverseGraph(n); // 方法被哪些其他方法调用
-        
-        for (const auto& e : invocations) {
-            graph[e[0]].push_back(e[1]);
-            reverseGraph[e[1]].push_back(e[0]);
-        }
-        
-        // 标记所有可疑方法
-        vector<bool> isSuspicious(n, false);
-        function<void(int)> dfs = [&](int node) {
-            isSuspicious[node] = true;
-            for (int next : graph[node]) {
-                if (!isSuspicious[next]) {
-                    dfs(next);
-                }
-            }
-        };
-        
-        dfs(k);
-        
-        // 检查所有可疑方法是否可以被移除
-        // 即检查是否有非可疑方法调用了可疑方法
-        for (int i = 0; i < n; i++) {
-            if (isSuspicious[i]) {
-                for (int caller : reverseGraph[i]) {
-                    if (!isSuspicious[caller]) {
-                        // 有非可疑方法调用了可疑方法，无法移除
-                        vector<int> allMethods(n);
-                        iota(allMethods.begin(), allMethods.end(), 0);
-                        return allMethods;
-                    }
-                }
-            }
-        }
-        
-        // 返回所有非可疑方法
-        vector<int> result;
-        for (int i = 0; i < n; i++) {
-            if (!isSuspicious[i]) {
-                result.push_back(i);
-            }
-        }
-        return result;
-    }
-};
-```     
+TODO：
+1. 学习一下C++的DFS和BFS
+2. 学习一下C++的图论

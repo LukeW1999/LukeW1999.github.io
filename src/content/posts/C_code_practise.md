@@ -13,7 +13,7 @@ lang: ''
 
 <iframe width="100%" height="500px" src="https://godbolt.org/e#g:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:c,selection:(endColumn:1,endLineNumber:1,positionColumn:1,positionLineNumber:1,selectionStartColumn:1,selectionStartLineNumber:1,startColumn:1,startLineNumber:1),source:''),l:'5',n:'0',o:'C+source+%231',t:'0')),k:50,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:executor,i:(argsPanelShown:'1',compilationPanelShown:'0',compiler:cg132,compilerName:'',compilerOutShown:'0',execArgs:'',execStdin:'',fontScale:14,fontUsePx:'0',j:1,lang:c,libs:!(),options:'',source:1,stdinPanelShown:'1',tree:'1',wrap:'1'),l:'5',n:'0',o:'Executor+x86-64+gcc+13.2+(C,+Editor+%231)',t:'0')),k:50,l:'4',n:'0',o:'',s:0,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4"></iframe>
 
-今天是2025年4月18日，今天练习两道medium和1道hard的题目。
+今天是2025年4月18日，今天练习一道medium。
 ```
 你正在维护一个项目，该项目有 n 个方法，编号从 0 到 n - 1。
 
@@ -90,4 +90,61 @@ public:
     }
 };
 
+
 ```
+
+效率非常低，看一下，应该用可以在DFS中进行标记,而不是两次遍历。
+
+```c++
+
+class Solution {
+public:
+    vector<int> remainingMethods(int n, int k, vector<vector<int>>& invocations) {
+        // 构建正向和反向邻接表
+        vector<vector<int>> graph(n);        // 方法调用了哪些其他方法
+        vector<vector<int>> reverseGraph(n); // 方法被哪些其他方法调用
+        
+        for (const auto& e : invocations) {
+            graph[e[0]].push_back(e[1]);
+            reverseGraph[e[1]].push_back(e[0]);
+        }
+        
+        // 标记所有可疑方法
+        vector<bool> isSuspicious(n, false);
+        function<void(int)> dfs = [&](int node) {
+            isSuspicious[node] = true;
+            for (int next : graph[node]) {
+                if (!isSuspicious[next]) {
+                    dfs(next);
+                }
+            }
+        };
+        
+        dfs(k);
+        
+        // 检查所有可疑方法是否可以被移除
+        // 即检查是否有非可疑方法调用了可疑方法
+        for (int i = 0; i < n; i++) {
+            if (isSuspicious[i]) {
+                for (int caller : reverseGraph[i]) {
+                    if (!isSuspicious[caller]) {
+                        // 有非可疑方法调用了可疑方法，无法移除
+                        vector<int> allMethods(n);
+                        iota(allMethods.begin(), allMethods.end(), 0);
+                        return allMethods;
+                    }
+                }
+            }
+        }
+        
+        // 返回所有非可疑方法
+        vector<int> result;
+        for (int i = 0; i < n; i++) {
+            if (!isSuspicious[i]) {
+                result.push_back(i);
+            }
+        }
+        return result;
+    }
+};
+```     

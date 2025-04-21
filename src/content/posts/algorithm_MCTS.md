@@ -1,5 +1,5 @@
 ---
-title: algorithm_MCTS
+title: Algorithm_MCTS
 published: 2025-04-18
 description: ''
 image: ''

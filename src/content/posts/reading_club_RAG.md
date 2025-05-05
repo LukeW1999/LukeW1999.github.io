@@ -9,7 +9,9 @@ draft: false
 lang: 'en'
 ---
 
-Hi guys, this reading club is suppoed to be hold on 6th May.
+Hi guys, this reading club is suppoed to be hold on 6th May. 
+
+The go thorugh would be too random. Hope you could read by yourself. Or maybe you could find a better blog to read. ^^
 
 It is about the paper of in context RAG [arxiv](https://arxiv.org/abs/2302.00083). Cool, let's start.
 
@@ -33,4 +35,20 @@ The main difference is that RAG commonly provide a retrieval result as some embe
 
 Beside that, very important thing is that it did not stop at the new structure of RAG, but also systematical analysis of the performance of RAG with a frequent retrieval. (result said more frequent retrieval is better)
 
-## What is the performance of in context RAG?
+## What is the performance of in context RAG in this paper?
+
+Improve the performance of Multiple or said all LLM with lower perplexity. 
+
+result 2: BM25 which is a variant of TF-IDF is better than all the encoder representation including BERT or other BERT-like model.
+
+They propose a very interesting design of the study. One is changable Retrieval stride that they can change the retrieval to change the frequency of retrieval. retrieval query length: since different LLM might have different context window, they can change the query length to see the performance.
+
+Result 3: they use a stride 4 instead of a common 64. so it is much more frequent retrieval. Result is that the frequency of retrieval is like a effience and effectiveness delimma: you cannot hold both.
+
+retrieval query length does not show large impact as the frequency did. For their task and model the bes one is query with 32 length. From my perspective, the number of the length should vary with different task at least and for model, might vary as well.
+
+Increase the range of the candidate could improve the performance a lot. 
+
+## Good innovation: LMs as a zero shot reranker
+
+They use a same model to do the reranking. It is more like a compensation for the BM25 since BM25 is not abled with the content understanding.
